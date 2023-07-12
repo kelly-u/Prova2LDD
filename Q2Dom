@@ -40,15 +40,10 @@ public class Q2Dom {
           
         // Precisa saber o nome dos times (elementos)
         // EU preciso saber o ano dos jogos (atributos)
-        NodeList albums = doc.getElementsByTagName("albums");
-        for (int i = 0; i < albums.getLength(); i++) {
-            Element alb = (Element) albums.item(i);
-            NodeList album = alb.getElementsByTagName("album");
-            Element a1 = (Element) album.item(0);
+        NodeList album = doc.getElementsByTagName("album");
+        for (int i = 0; i < album.getLength(); i++) {
+            Element a1 = (Element) album.item(i);
             System.out.println(a1.getAttribute("year"));
-            
         }
-        
     }
-    
 }
