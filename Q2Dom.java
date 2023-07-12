@@ -22,7 +22,7 @@ public class Q2Dom {
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(new File("src/CaetanoVeloso.xml"));
         List<Ano> mapa = new ArrayList();
-        
+
         NodeList album = doc.getElementsByTagName("album");
         for (int i = 0; i < album.getLength(); i++) {
             Element alb1 = (Element) album.item(i);
@@ -41,8 +41,12 @@ public class Q2Dom {
                 mapa.add(temp);
             }
         }
-        System.out.println(mapa);
-    }
+        
+        mapa.sort((Ano o1, Ano o2) -> o2.getaGRav() - o1.getaGRav());
+        System.out.println(mapa.get(0).getNome()); // Nome do ano com mais gravações
+        System.out.println(mapa.get(0).getaGRav()); // Quantidade de gravações
+        System.out.println("<year count=\"" + mapa.get(0).getaGRav() + "\">" +  mapa.get(0).getNome()+ "</year>");
+    }    
 }
 
 class Ano {
