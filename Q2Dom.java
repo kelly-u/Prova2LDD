@@ -3,6 +3,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,12 +23,12 @@ import org.xml.sax.SAXException;
 
 public class Q2Dom {
 
-    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
+    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, JAXBException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(new File("src/CaetanoVeloso.xml"));
         List<Ano> mapa = new ArrayList();
-
+        
         NodeList album = doc.getElementsByTagName("album");
         for (int i = 0; i < album.getLength(); i++) {
             Element alb1 = (Element) album.item(i);
@@ -41,19 +47,32 @@ public class Q2Dom {
                 mapa.add(temp);
             }
         }
-        
+
         mapa.sort((Ano o1, Ano o2) -> o2.getaGRav() - o1.getaGRav());
-        System.out.println(mapa.get(0).getNome()); // Nome do ano com mais gravações
-        System.out.println(mapa.get(0).getaGRav()); // Quantidade de gravações
-        System.out.println("<year count=\"" + mapa.get(0).getaGRav() + "\">" +  mapa.get(0).getNome()+ "</year>");
-    }    
+  
+        Ano a = new Ano(mapa.get(0).getNome(), mapa.get(0).getaGRav());
+        
+        JAXBContext jaxbContext = JAXBContext.newInstance(Ano.class);
+        Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+        jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        jaxbMarshaller.marshal(a, System.out);
+               
+    }
 }
 
-class Ano {
 
+@XmlRootElement(name="ano")
+class Ano {
     String nome;
     int aGRav;
-
+    
+    public Ano(String n, int a) {
+        this.nome = n;
+        this.aGRav = a;
+    }
+    public Ano(){}
+    
+    @XmlElement(name="year")
     public String getNome() {
         return nome;
     }
@@ -61,17 +80,13 @@ class Ano {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
+    
+    @XmlAttribute(name="count")
     public int getaGRav() {
         return aGRav;
     }
 
     public void setaGRav(int aGRav) {
-        this.aGRav = aGRav;
-    }
-
-    public Ano(String nome, int aGRav) {
-        this.nome = nome;
         this.aGRav = aGRav;
     }
 
